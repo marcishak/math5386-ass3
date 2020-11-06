@@ -47,8 +47,8 @@ class ModelInstance:
         self.opt_func = opt_func
         self.metrics = metrics
         self.output_activation = output_activation
-        with open("test.txt", "a+") as fh:
-            print(loss_func, file=fh)
+        # with open("test.txt", "a+") as fh:
+        #     print(loss_func, file=fh)
         self.model_name = f"{len(layers)}x{hidden_layer_activation}x{output_activation}layer opt-{opt_func._name} loss-{loss_func.name}"
         self.loss_func_name = loss_func.name
         self.opt_func_name = opt_func._name
@@ -56,7 +56,7 @@ class ModelInstance:
             self.modelwrapper.add_layer(layer)
         self.modelwrapper.build_model()
         self.modelwrapper.compile_model(loss_func, opt_func, metrics)
-        print(self.model_name)
+        # print(self.model_name)
 
     def fit_predict_model(self, validation_data=None, **kwargs):
         if validation_data == "validation":
@@ -66,7 +66,7 @@ class ModelInstance:
         )
         self.y_preds = self.modelwrapper.predict(self.X_test)
 
-    def build_classifcation_report(self, path="data/reporting/models/"):
+    def build_classifcation_report(self, path="data/reporting/nnmodels/"):
         dt = datetime.now().strftime("%Y%m%d%H%M%S")
         # print(dt)
         path = path + f"{dt}-{self.model_name}/"

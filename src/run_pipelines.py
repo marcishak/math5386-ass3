@@ -14,7 +14,7 @@ def run_ds_pipe():
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument('--pipeline', choices=['process', 'model'], default = "all",
+    parser.add_argument('--pipeline', choices=['process', 'model', 'all'], default = "all",
                         help='which pipeline would you like to run?')
     args = parser.parse_args()
     if args.pipeline == "process":
@@ -22,7 +22,7 @@ def main():
     elif args.pipeline == "model":
         run_ds_pipe()
     else:
-        run_de_pipe(run_ds_pipe)
+        run_ds_pipe(run_de_pipe())
 
 if __name__ == "__main__":
     main()
