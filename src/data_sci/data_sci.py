@@ -48,4 +48,8 @@ def _build_layers(hidden_layers):
     ]
     return zip(layers, hidden_layers)
 
-def run_and_fit_nns(X_train:np.array, X_test:np.array, y_train:np.array, y_test:np.array, hidden_layers_size:List[5], runs_per:int = 10):
+def _run_and_fit_nns(X_train:np.array, X_test:np.array, y_train:np.array, y_test:np.array, hidden_layers_size:List[5], runs_per:int = 10):
+    pass
+
+
+def run_pipe
