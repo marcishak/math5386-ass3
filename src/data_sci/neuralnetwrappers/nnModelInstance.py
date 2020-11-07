@@ -6,7 +6,7 @@ from sklearn.model_selection import train_test_split
 from tensorflow import keras
 from datetime import datetime
 import os
-from ModelWrapper import ModelWrapper
+from .nnModelWrapper import ModelWrapper
 from typing import List
 
 

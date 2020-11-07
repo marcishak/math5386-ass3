@@ -9,7 +9,8 @@ class ModelWrapper:
     """
     Wrapper for defining and testing SkLearn Models
     """
-    def __init__(self, )
+    def __init__(self):
+        pass
 
 
 def fit_plot_roc(mod, X_test, y_test, path=None):
