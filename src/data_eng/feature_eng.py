@@ -15,7 +15,7 @@ def _split_features_response(df:pd.DataFrame, y_col:Any=28, x_cols:Any=None):
     return (X,y)
 
 
-def _sklearn_feature_pipeline(X:np.array):
+def _sklearn_feature_pipeline_park(X:np.array):
     pipeline = Pipeline([
         ('scaler', MinMaxScaler()),
         ('PCA', PCA(n_components=6)),
@@ -30,15 +30,16 @@ def _write_return_files(X_train:np.array, X_test:np.array, y_train:np.array, y_t
     return X_train, X_test, y_train, y_test
 
 
-def run_fe_pipe(df:pd.DataFrame, test_prop:float = 0.2, random_seed:float = 69):
+def run_fe_pipe_park(df:pd.DataFrame, test_prop:float = 0.2, random_seed:float = 69):
     X,y = _split_features_response(df)
-    X = _sklearn_feature_pipeline(X)
+    X = _sklearn_feature_pipeline_park(X)
     X_train, X_test, y_train, y_test = train_test_split(
         X, y, test_size=test_prop, random_state=random_seed
     )
-    return _write_return_files(X_train, X_test, y_train, y_test)
+    return _write_return_files(X_train, X_test, y_train, y_test, "data/featured/park/")
 
 
 
-
+def run_fe_pipe_abalone(df:pd.DataFrame, test_prop:float = 0.2, random_seed:float = 69):
+    pass
 
