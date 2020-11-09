@@ -3,10 +3,10 @@ import numpy as np
 import tensorflow as tf
 from sklearn.metrics import classification_report, roc_curve, roc_auc_score, f1_score
 from sklearn.model_selection import train_test_split
+from sklearn.tree import export_graphviz, export_text
 # from sklearn
 from datetime import datetime
 import os
-from .skModelWrapper import ModelWrapper
 from typing import List
 from tensorflow import keras
 
@@ -15,57 +15,32 @@ class ModelInstance:
     """
     Wrapper for each model instance
     """
-
     def __init__(
         self,
         X_train,
         y_train,
         X_test,
         y_test,
-        layers,
-        hidden_layer_activation="relu",
-        output_activation="sigmoid",
-        loss_func=keras.losses.BinaryCrossentropy(),
-        opt_func=keras.optimizers.Adam(),
-        metrics=["AUC"],
-        validation_split=0.3,
-        random_seed=69,
+        sklearn_model,
+        feature_names,
+        rstate,
     ):
         """
         docstring
         """
+        self.X_train = X_train
+        self.y_train = y_train
         self.X_test = X_test
         self.y_test = y_test
-        self.X_train, self.X_val, self.y_train, self.y_val = train_test_split(
-            X_train, y_train, test_size=validation_split, random_state=random_seed
-        )
-        self.modelwrapper = ModelWrapper(
-            inputs=keras.Input(shape=(X_train.shape[1],)),
-            outputs=keras.layers.Dense(1, activation=output_activation),
-        )
-        self.layers = layers
-        self.loss_func = loss_func
-        self.opt_func = opt_func
-        self.metrics = metrics
-        self.output_activation = output_activation
-        # with open("test.txt", "a+") as fh:
-        #     print(loss_func, file=fh)
-        self.model_name = f"{len(layers)}x{hidden_layer_activation}x{output_activation}layer opt-{opt_func._name} loss-{loss_func.name}"
-        self.loss_func_name = loss_func.name
-        self.opt_func_name = opt_func._name
-        for layer in layers:
-            self.modelwrapper.add_layer(layer)
-        self.modelwrapper.build_model()
-        self.modelwrapper.compile_model(loss_func, opt_func, metrics)
-        print(self.model_name)
+        self.model = sklearn_model
+        self.model_name = sklearn_model.__repr__().replace("()","")
+        self.feature_names = feature_names
 
-    def fit_predict_model(self, validation_data=None, **kwargs):
-        if validation_data == "validation":
-            vali = (self.X_val, self.y_val)
-        self.modelwrapper.fit(
-            self.X_train, self.y_train, validation_data=vali, **kwargs
-        )
-        self.y_preds = self.modelwrapper.predict(self.X_test)
+
+    def fit_predict_model(self):
+        self.model.fit(self.X_train,self.y_train)
+        self.y_preds = self.model(self.X_test)
+        self.model_struct = export_text(self.model, feature_names=self.feature_names)
 
     def build_classifcation_report(self, path="data/reporting/sklmodels/"):
         dt = datetime.now().strftime("%Y%m%d%H%M%S")
@@ -73,7 +48,7 @@ class ModelInstance:
         path = path + f"{dt}-{self.model_name}/"
         if not os.path.exists(path):
             os.makedirs(path)
-        self.modelwrapper.plot_model(path + "model_plot.png")
+        # self.modelwrapper.plot_model(path + "model_plot.png")
         fpr, tpr, _ = roc_curve(self.y_test, self.y_preds)
         self.fpr = fpr
         self.tpr = tpr
@@ -90,24 +65,24 @@ class ModelInstance:
         plt.legend()
         plt.savefig(path + "roc_curve.png")
         plt.close()
-        self.y_predslabels = np.multiply(self.y_preds > 0.5, 1)
-        self.modelwrapper.plot_epoch_loss("AUC", "AUC", path + "epoch_AUC.png")
-        self.modelwrapper.plot_epoch_loss(path=path + "epoch_loss.png")
+        # self.y_predslabels = np.multiply(self.y_preds > 0.5, 1)
         self.roc_auc_score = roc_auc_score(self.y_test, self.y_preds)
-        
-        self.f1_score = f1_score(self.y_test, self.y_predslabels)
-
+        self.f1_score = f1_score(self.y_test, self.y_preds)
         with open(path + "report.txt", "a+") as f:
-            f.write(self.modelwrapper.__repr__())
+            f.write(self.model_struct)
             f.write(f"\nroc_auc_score: {self.roc_auc_score}\n\n")
             try:
                 f.write(
                     classification_report(
-                        self.y_test, self.y_predslabels
+                        self.y_test, self.y_pred
                     )
                 )
             except ValueError:
                 f.write("\nCould Not Produce Classification Report")
+
+    def plot_model(self, path):
+
+
 
 
 def summarise_model_instances(models: List[ModelInstance], hidden_layer_size, layers_length):

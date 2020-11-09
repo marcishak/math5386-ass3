@@ -4,22 +4,22 @@ import numpy as np
 
 import data_eng as de
 import data_sci as ds
-
+from typing import Optional, List
 
 def run_de_pipe(dataset: str):
     if dataset == "park":
         df = de.data_clean.run_dc_pipe_park("data/raw/park/train_data.txt")
         X_train, X_test, y_train, y_test = de.feature_eng.run_fe_pipe_park(df)
-        return X_train, X_test, y_train, y_test
+        return [X_train, X_test, y_train, y_test]
     elif dataset == "abalone":
         df = de.data_clean.run_dc_pipe_abelone("data/raw/abalone/abalone.data")
         X_train, X_test, y_train, y_test = de.feature_eng.run_fe_pipe_abalone(df)
-        return X_train, X_test, y_train, y_test
+        return [X_train, X_test, y_train, y_test]
     else:
         raise ValueError("Dataset must be park or abalone")
 
 
-def run_ds_pipe(X_train=None, X_test=None, y_train=None, y_test=None, dataset=None):
+def run_ds_pipe(train_test_list:Optional[List[np.array]], dataset:str=None):
     if dataset is not None:
         X_train = np.loadtxt("data/featured/" + dataset + "X_train.csv")
         y_train = np.loadtxt("data/featured/" + dataset + "y_train.csv")

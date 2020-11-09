@@ -17,21 +17,22 @@ def _split_features_response(df: pd.DataFrame, y_col: Any = 28, x_cols: Any = No
     return (X, y)
 
 
-def _sklearn_feature_pipeline_park(X: np.array):
+# I could merge these but I don't want to in case I want to add to one dataset pipeline and not the other!
+def _sklearn_feature_pipeline_park(X: np.array) -> np.array:
     pipeline = Pipeline([("scaler", MinMaxScaler()), ("PCA", PCA(n_components=6)),])
     return pipeline.fit_transform(X)
 
 
-def _sklearn_feature_pipeline_abalone(X: np.array):
+def _sklearn_feature_pipeline_abalone(X: np.array) -> np.array:
     pipeline = Pipeline([("scaler", MinMaxScaler()), ("PCA", PCA(n_components=1)),])
     return pipeline.fit_transform(X)
 
 
-def _to_df_get_dummies(X: np.array, prefix: str):
+def _to_df_get_dummies(X: np.array, prefix: str) -> pd.DataFrame:
     return pd.get_dummies(X, prefix=prefix)
 
 
-def _rbind_1_np_array_df(df: pd.DataFrame, X: np.array, X_name: str):
+def _rbind_1_np_array_df(df: pd.DataFrame, X: np.array, X_name: str) -> pd.DataFrame:
     # print(df)
     # print(X)
     s = pd.Series(X[:, 0], name=X_name)
