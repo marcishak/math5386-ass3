@@ -27,7 +27,10 @@ def run_ds_pipe(train_test_list:Optional[List[np.array]], p_type:str, dataset:st
         y_test = np.loadtxt("data/featured/" + dataset + "y_test.csv")
     else:
         X_train, y_train, X_test, y_test = train_test_list
-    ds.run_pipe(X_train, y_train, X_test, y_test, p_type)
+    if "NN" in p_type:
+        ds.nn_run_pipe(X_train, y_train, X_test, y_test, p_type)
+    else:
+        ds.sk_run_pipe(X_train, y_train, X_test, y_test, p_type)
 
 
 def main():
@@ -53,10 +56,12 @@ def main():
     if "abalone" in datasets:
         models.append("DecisionTreeRegressor")
         models.append("RandomForestRegressor")
+        models.append("NNRegressor")
     if "park" in datasets:
         models.append("DecisionTreeClassifier")
         models.append("RandomForestClassifier")
-    m_ds = list(zip(sorted(datasets*2), models))
+        models.append("NNClassifier")
+    m_ds = list(zip(sorted(datasets*round(len(models)/2)), models))
     # m_ds = list(zip(datasets, models))
     print(m_ds)
     for dataset, model in m_ds:

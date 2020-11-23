@@ -38,7 +38,7 @@ class ModelInstance:
         sklearn_model,
         feature_names,
         optimisation_level=100,
-        val_prop=0.2,
+        val_prop=0.3,
     ):
         """
         docstring
@@ -47,12 +47,28 @@ class ModelInstance:
         self.y_train = y_train
         self.X_test = X_test
         self.y_test = y_test
+        self.y_preds = None
+        self.X_val = None
+        self.y_val = None
         self.model = sklearn_model
         self.model_name = sklearn_model.__repr__().replace("()", "")
         self.feature_names = feature_names
         self.rstate = np.random.default_rng(seed=69)
         self.optimisation_level = optimisation_level
         self.val_prop = val_prop
+        self.ccp_path = None
+        self.model_struct = None
+        self.fpr = None
+        self.tpr = None
+        self.roc_auc_score = None
+        self.f1_score = None
+        self.r2 = None
+        self.mse = None
+        self.sample_ccp_alphas = None
+        self.fitted_models = None
+        self.train_scores = None 
+        self.test_scores  = None
+
 
     def fit_predict_model(self):
         if "Random" not in self.model_name:
@@ -122,8 +138,8 @@ class ModelInstance:
             with open(path + "report.txt", "a+") as f:
                 f.write(self.model_struct)
                 self.r2 = r2_score(self.y_test, self.y_preds)
-                f.write(f"R2: {self.r2}\n")
                 self.mse = mean_squared_error(self.y_test, self.y_preds)
+                f.write(f"R2: {self.r2}\n")
                 f.write(f"MSE: {self.mse}\n")
         if "Random" not in self.model_name:
             self._plot_model(path)
