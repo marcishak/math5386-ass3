@@ -3,6 +3,10 @@
 
 sampleouttext.txt contains console output
 
+make sure you create conda enviroment using enviroment.yml!!
+
+
+
     usage: run_pipelines.py [-h] [--pipeline {process,model,all}] [--dataset {abalone,park,all}]
     
     optional arguments:
